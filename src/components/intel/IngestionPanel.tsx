@@ -18,6 +18,7 @@ const randomNear = (lat: number, lng: number, jitter = 4) => ({
 
 export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
   const [dragOver, setDragOver] = useState(false);
+  const [recent, setRecent] = useState<IntelNode[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const parseCsv = (text: string): IntelNode[] => {
