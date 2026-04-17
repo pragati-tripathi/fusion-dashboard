@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { Upload, FileJson, FileSpreadsheet, Image as ImageIcon, Database, Cloud } from "lucide-react";
+import { Upload, FileJson, FileSpreadsheet, Image as ImageIcon, Database, Cloud, CheckCircle2, MapPin, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IntelNode } from "@/data/intelData";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ const randomNear = (lat: number, lng: number, jitter = 4) => ({
 
 export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
   const [dragOver, setDragOver] = useState(false);
+  const [recent, setRecent] = useState<IntelNode[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const parseCsv = (text: string): IntelNode[] => {
@@ -27,21 +28,25 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
     const idx = (k: string) => headers.indexOf(k);
     return lines.slice(1).map((line) => {
       const cells = line.split(",").map((c) => c.trim());
-      const lat = parseFloat(cells[idx("lat")] || cells[idx("latitude")] || "0");
-      const lng = parseFloat(cells[idx("lng")] || cells[idx("longitude")] || cells[idx("lon")] || "0");
+      const get = (k: string) => (idx(k) >= 0 ? cells[idx(k)] : "");
+      const latRaw = get("lat") || get("latitude");
+      const lngRaw = get("lng") || get("longitude") || get("lon");
+      const latParsed = parseFloat(latRaw);
+      const lngParsed = parseFloat(lngRaw);
+      const fallback = randomNear(20, 30, 80);
       return {
-        id: cells[idx("id")] || newId("HU"),
+        id: get("id") || newId("HU"),
         source: "HUMINT",
-        title: cells[idx("title")] || "Field Report (CSV)",
-        summary: cells[idx("summary")] || cells[idx("description")] || "Imported from CSV ingestion.",
-        lat: isFinite(lat) ? lat : 0,
-        lng: isFinite(lng) ? lng : 0,
+        title: get("title") || "Field Report (CSV)",
+        summary: get("summary") || get("description") || `Imported row: ${line.slice(0, 80)}`,
+        lat: isFinite(latParsed) && latParsed !== 0 ? latParsed : fallback.lat,
+        lng: isFinite(lngParsed) && lngParsed !== 0 ? lngParsed : fallback.lng,
         timestamp: new Date().toISOString(),
         confidence: "MEDIUM",
         classification: "CONFIDENTIAL",
         origin: "Manual Upload / CSV",
       } as IntelNode;
-    }).filter((n) => n.lat !== 0 || n.lng !== 0);
+    });
   };
 
   const handleFiles = useCallback(async (files: FileList | File[]) => {
@@ -104,7 +109,12 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
 
     if (ingested.length) {
       onIngest(ingested);
-      toast.success(`Ingested ${ingested.length} intel node${ingested.length > 1 ? "s" : ""}`);
+      setRecent((r) => [...ingested, ...r].slice(0, 5));
+      toast.success(`Ingested ${ingested.length} intel node${ingested.length > 1 ? "s" : ""}`, {
+        description: ingested.map((n) => `${n.id} • ${n.source}`).join(", "),
+      });
+    } else {
+      toast.warning("No records ingested", { description: "File parsed but produced no intel nodes." });
     }
   }, [onIngest]);
 
@@ -140,6 +150,7 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
       };
     });
     onIngest(nodes);
+    setRecent((r) => [...nodes, ...r].slice(0, 5));
     toast.success(`Pulled ${nodes.length} ${kind === "mongo" ? "MongoDB" : "S3"} records`);
   };
 
@@ -197,6 +208,52 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
           onClick={() => simulate("s3")}
         />
       </div>
+
+      {recent.length > 0 && (
+        <div className="space-y-1.5 pt-1 border-t border-border/60">
+          <div className="flex items-center justify-between px-1">
+            <div className="label-mono">Recently Ingested</div>
+            <button
+              onClick={() => setRecent([])}
+              className="label-mono text-muted-foreground hover:text-primary transition-colors"
+            >
+              CLEAR
+            </button>
+          </div>
+          <div className="space-y-1">
+            {recent.map((n) => (
+              <div
+                key={n.id}
+                className="flex items-start gap-2 px-2 py-1.5 rounded border border-border/60 bg-secondary/30"
+              >
+                <CheckCircle2 className={cn(
+                  "h-3.5 w-3.5 mt-0.5 shrink-0",
+                  n.source === "OSINT" && "text-osint",
+                  n.source === "HUMINT" && "text-humint",
+                  n.source === "IMINT" && "text-imint",
+                )} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-[10px] text-primary">{n.id}</span>
+                    <span className="font-mono text-[9px] uppercase text-muted-foreground">{n.source}</span>
+                  </div>
+                  <div className="text-[11px] font-medium truncate">{n.title}</div>
+                  <div className="flex items-center gap-2 font-mono text-[9px] text-muted-foreground">
+                    <span className="flex items-center gap-0.5">
+                      <MapPin className="h-2.5 w-2.5" />
+                      {n.lat.toFixed(2)}, {n.lng.toFixed(2)}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <Clock className="h-2.5 w-2.5" />
+                      {new Date(n.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
