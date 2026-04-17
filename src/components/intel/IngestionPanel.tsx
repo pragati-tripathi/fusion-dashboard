@@ -109,7 +109,12 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
 
     if (ingested.length) {
       onIngest(ingested);
-      toast.success(`Ingested ${ingested.length} intel node${ingested.length > 1 ? "s" : ""}`);
+      setRecent((r) => [...ingested, ...r].slice(0, 5));
+      toast.success(`Ingested ${ingested.length} intel node${ingested.length > 1 ? "s" : ""}`, {
+        description: ingested.map((n) => `${n.id} • ${n.source}`).join(", "),
+      });
+    } else {
+      toast.warning("No records ingested", { description: "File parsed but produced no intel nodes." });
     }
   }, [onIngest]);
 
