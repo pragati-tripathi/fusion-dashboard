@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { Upload, FileJson, FileSpreadsheet, Image as ImageIcon, Database, Cloud } from "lucide-react";
+import { Upload, FileJson, FileSpreadsheet, Image as ImageIcon, Database, Cloud, CheckCircle2, MapPin, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IntelNode } from "@/data/intelData";
 import { toast } from "sonner";
