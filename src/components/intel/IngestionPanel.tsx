@@ -150,6 +150,7 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
       };
     });
     onIngest(nodes);
+    setRecent((r) => [...nodes, ...r].slice(0, 5));
     toast.success(`Pulled ${nodes.length} ${kind === "mongo" ? "MongoDB" : "S3"} records`);
   };
 
