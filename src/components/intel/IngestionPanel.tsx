@@ -28,21 +28,25 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
     const idx = (k: string) => headers.indexOf(k);
     return lines.slice(1).map((line) => {
       const cells = line.split(",").map((c) => c.trim());
-      const lat = parseFloat(cells[idx("lat")] || cells[idx("latitude")] || "0");
-      const lng = parseFloat(cells[idx("lng")] || cells[idx("longitude")] || cells[idx("lon")] || "0");
+      const get = (k: string) => (idx(k) >= 0 ? cells[idx(k)] : "");
+      const latRaw = get("lat") || get("latitude");
+      const lngRaw = get("lng") || get("longitude") || get("lon");
+      const latParsed = parseFloat(latRaw);
+      const lngParsed = parseFloat(lngRaw);
+      const fallback = randomNear(20, 30, 80);
       return {
-        id: cells[idx("id")] || newId("HU"),
+        id: get("id") || newId("HU"),
         source: "HUMINT",
-        title: cells[idx("title")] || "Field Report (CSV)",
-        summary: cells[idx("summary")] || cells[idx("description")] || "Imported from CSV ingestion.",
-        lat: isFinite(lat) ? lat : 0,
-        lng: isFinite(lng) ? lng : 0,
+        title: get("title") || "Field Report (CSV)",
+        summary: get("summary") || get("description") || `Imported row: ${line.slice(0, 80)}`,
+        lat: isFinite(latParsed) && latParsed !== 0 ? latParsed : fallback.lat,
+        lng: isFinite(lngParsed) && lngParsed !== 0 ? lngParsed : fallback.lng,
         timestamp: new Date().toISOString(),
         confidence: "MEDIUM",
         classification: "CONFIDENTIAL",
         origin: "Manual Upload / CSV",
       } as IntelNode;
-    }).filter((n) => n.lat !== 0 || n.lng !== 0);
+    });
   };
 
   const handleFiles = useCallback(async (files: FileList | File[]) => {
