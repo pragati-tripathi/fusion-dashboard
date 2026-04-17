@@ -16,10 +16,25 @@ const Index = () => {
   });
   const [now, setNow] = useState(new Date());
 
+  /* ✅ STEP 1: LOAD FROM LOCAL STORAGE */
+  useEffect(() => {
+    const saved = localStorage.getItem("nodes");
+    if (saved) {
+      setNodes(JSON.parse(saved));
+    }
+  }, []);
+
+  /* ✅ STEP 1: SAVE TO LOCAL STORAGE */
+  useEffect(() => {
+    localStorage.setItem("nodes", JSON.stringify(nodes));
+  }, [nodes]);
+
+  /* Existing useEffect (DO NOT REMOVE) */
   useEffect(() => {
     document.title = "Strategic Fusion Dashboard — OSINT • HUMINT • IMINT";
     const meta = document.querySelector('meta[name="description"]');
-    const desc = "Multi-source intelligence fusion dashboard unifying OSINT, HUMINT and IMINT on a single geospatial common operating picture.";
+    const desc =
+      "Multi-source intelligence fusion dashboard unifying OSINT, HUMINT and IMINT on a single geospatial common operating picture.";
     if (meta) meta.setAttribute("content", desc);
     else {
       const m = document.createElement("meta");
@@ -33,14 +48,17 @@ const Index = () => {
 
   const counts = useMemo(() => {
     return nodes.reduce(
-      (acc, n) => { acc[n.source] = (acc[n.source] ?? 0) + 1; return acc; },
-      { OSINT: 0, HUMINT: 0, IMINT: 0 } as Record<IntelSource, number>,
+      (acc, n) => {
+        acc[n.source] = (acc[n.source] ?? 0) + 1;
+        return acc;
+      },
+      { OSINT: 0, HUMINT: 0, IMINT: 0 } as Record<IntelSource, number>
     );
   }, [nodes]);
 
   const visibleNodes = useMemo(
     () => nodes.filter((n) => active[n.source]),
-    [nodes, active],
+    [nodes, active]
   );
 
   const lastUpdate = now.toISOString().slice(11, 19) + "Z";
@@ -56,9 +74,13 @@ const Index = () => {
           <SourceFilter
             active={active}
             counts={counts}
-            onToggle={(s) => setActive((a) => ({ ...a, [s]: !a[s] }))}
+            onToggle={(s) =>
+              setActive((a) => ({ ...a, [s]: !a[s] }))
+            }
           />
-          <IngestionPanel onIngest={(n) => setNodes((prev) => [...n, ...prev])} />
+          <IngestionPanel
+            onIngest={(n) => setNodes((prev) => [...n, ...prev])}
+          />
         </aside>
 
         {/* Map */}
@@ -71,14 +93,18 @@ const Index = () => {
           <IntelFeed nodes={visibleNodes} />
         </aside>
 
-        {/* Mobile: stacked filter + feed below map */}
+        {/* Mobile layout */}
         <div className="lg:hidden flex flex-col gap-3">
           <SourceFilter
             active={active}
             counts={counts}
-            onToggle={(s) => setActive((a) => ({ ...a, [s]: !a[s] }))}
+            onToggle={(s) =>
+              setActive((a) => ({ ...a, [s]: !a[s] }))
+            }
           />
-          <IngestionPanel onIngest={(n) => setNodes((prev) => [...n, ...prev])} />
+          <IngestionPanel
+            onIngest={(n) => setNodes((prev) => [...n, ...prev])}
+          />
           <div className="h-[40vh]">
             <IntelFeed nodes={visibleNodes} />
           </div>

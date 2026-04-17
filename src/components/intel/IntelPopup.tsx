@@ -15,43 +15,62 @@ const classificationStyle: Record<IntelNode["classification"], string> = {
 
 export const IntelPopupContent = ({ node }: { node: IntelNode }) => {
   const time = new Date(node.timestamp).toUTCString().replace("GMT", "Z");
+
   return (
     <div className="font-sans text-foreground">
-      {node.imageUrl && (
+
+      {/* ✅ IMAGE SECTION (FIXED) */}
+      {node.imageUrl ? (
         <div className="relative h-32 w-full overflow-hidden rounded-t-md scanline">
           <img
             src={node.imageUrl}
             alt={node.title}
             loading="lazy"
-            width={512}
-            height={512}
             className="h-full w-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src =
+                "https://via.placeholder.com/300x150?text=No+Image";
+            }}
           />
+
           <div className="absolute inset-0 bg-gradient-to-t from-popover via-transparent to-transparent" />
+
           <div className="absolute top-1.5 left-1.5 font-mono text-[9px] uppercase tracking-widest text-primary bg-background/70 px-1.5 py-0.5 rounded border border-primary/40">
             IMINT FEED
           </div>
         </div>
+      ) : (
+        <div className="h-32 w-full flex items-center justify-center bg-muted text-xs text-muted-foreground rounded-t-md">
+          No Image Available
+        </div>
       )}
 
+      {/* ✅ CONTENT */}
       <div className="p-3 space-y-2.5">
         <div className="flex items-center justify-between gap-2">
-          <span className={cn(
-            "font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border",
-            sourceColor[node.source],
-          )}>
+          <span
+            className={cn(
+              "font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border",
+              sourceColor[node.source]
+            )}
+          >
             {node.source}
           </span>
-          <span className={cn(
-            "font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border",
-            classificationStyle[node.classification],
-          )}>
+
+          <span
+            className={cn(
+              "font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border",
+              classificationStyle[node.classification]
+            )}
+          >
             {node.classification}
           </span>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold leading-snug">{node.title}</h3>
+          <h3 className="text-sm font-semibold leading-snug">
+            {node.title}
+          </h3>
           <div className="font-mono text-[10px] text-muted-foreground mt-0.5">
             ID {node.id}
           </div>
@@ -66,14 +85,19 @@ export const IntelPopupContent = ({ node }: { node: IntelNode }) => {
             {Object.entries(node.meta).map(([k, v]) => (
               <div key={k} className="min-w-0">
                 <div className="label-mono truncate">{k}</div>
-                <div className="font-mono text-[11px] text-foreground truncate">{v}</div>
+                <div className="font-mono text-[11px] text-foreground truncate">
+                  {v}
+                </div>
               </div>
             ))}
           </div>
         )}
 
         <div className="pt-2 border-t border-border space-y-1">
-          <Row label="COORDS" value={`${node.lat.toFixed(4)}, ${node.lng.toFixed(4)}`} />
+          <Row
+            label="COORDS"
+            value={`${node.lat.toFixed(4)}, ${node.lng.toFixed(4)}`}
+          />
           <Row label="ORIGIN" value={node.origin} />
           <Row label="LOGGED" value={time} />
           <Row label="CONF" value={node.confidence} highlight />
@@ -83,13 +107,23 @@ export const IntelPopupContent = ({ node }: { node: IntelNode }) => {
   );
 };
 
-const Row = ({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) => (
+const Row = ({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) => (
   <div className="flex items-center justify-between gap-2 text-[10px]">
     <span className="label-mono">{label}</span>
-    <span className={cn(
-      "font-mono tabular-nums truncate",
-      highlight ? "text-primary" : "text-foreground/80",
-    )}>
+    <span
+      className={cn(
+        "font-mono tabular-nums truncate",
+        highlight ? "text-primary" : "text-foreground/80"
+      )}
+    >
       {value}
     </span>
   </div>
