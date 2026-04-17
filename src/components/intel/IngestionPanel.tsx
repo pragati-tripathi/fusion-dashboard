@@ -208,6 +208,52 @@ export const IngestionPanel = ({ onIngest }: IngestionPanelProps) => {
           onClick={() => simulate("s3")}
         />
       </div>
+
+      {recent.length > 0 && (
+        <div className="space-y-1.5 pt-1 border-t border-border/60">
+          <div className="flex items-center justify-between px-1">
+            <div className="label-mono">Recently Ingested</div>
+            <button
+              onClick={() => setRecent([])}
+              className="label-mono text-muted-foreground hover:text-primary transition-colors"
+            >
+              CLEAR
+            </button>
+          </div>
+          <div className="space-y-1">
+            {recent.map((n) => (
+              <div
+                key={n.id}
+                className="flex items-start gap-2 px-2 py-1.5 rounded border border-border/60 bg-secondary/30"
+              >
+                <CheckCircle2 className={cn(
+                  "h-3.5 w-3.5 mt-0.5 shrink-0",
+                  n.source === "OSINT" && "text-osint",
+                  n.source === "HUMINT" && "text-humint",
+                  n.source === "IMINT" && "text-imint",
+                )} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-[10px] text-primary">{n.id}</span>
+                    <span className="font-mono text-[9px] uppercase text-muted-foreground">{n.source}</span>
+                  </div>
+                  <div className="text-[11px] font-medium truncate">{n.title}</div>
+                  <div className="flex items-center gap-2 font-mono text-[9px] text-muted-foreground">
+                    <span className="flex items-center gap-0.5">
+                      <MapPin className="h-2.5 w-2.5" />
+                      {n.lat.toFixed(2)}, {n.lng.toFixed(2)}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <Clock className="h-2.5 w-2.5" />
+                      {new Date(n.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
