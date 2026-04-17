@@ -2,95 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Strategic Fusion Dashboard — Modern Intel design system.
+   All colors MUST be HSL. */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Deep navy command surfaces */
+    --background: 215 35% 7%;
+    --foreground: 200 25% 92%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 215 32% 10%;
+    --card-foreground: 200 25% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 215 38% 9%;
+    --popover-foreground: 200 25% 92%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Cyan = primary actionable / live signal */
+    --primary: 188 95% 55%;
+    --primary-foreground: 215 40% 8%;
+    --primary-glow: 188 100% 65%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 215 28% 14%;
+    --secondary-foreground: 200 25% 92%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 215 25% 13%;
+    --muted-foreground: 210 15% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 175 70% 45%;
+    --accent-foreground: 215 40% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --warning: 38 95% 58%;
+    --warning-foreground: 215 40% 8%;
+
+    --success: 145 70% 50%;
+    --success-foreground: 215 40% 8%;
+
+    /* Intel source category colors */
+    --osint: 188 95% 55%;     /* cyan */
+    --humint: 38 95% 58%;     /* amber */
+    --imint: 285 80% 65%;     /* violet */
+
+    --border: 215 28% 18%;
+    --input: 215 28% 16%;
+    --ring: 188 95% 55%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Gradients */
+    --gradient-panel: linear-gradient(180deg, hsl(215 32% 11% / 0.95), hsl(215 35% 8% / 0.95));
+    --gradient-glow: radial-gradient(circle at 50% 0%, hsl(188 95% 55% / 0.15), transparent 70%);
+    --gradient-classified: linear-gradient(90deg, hsl(0 85% 50%), hsl(15 90% 55%));
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Shadows */
+    --shadow-panel: 0 8px 32px -8px hsl(215 50% 2% / 0.6);
+    --shadow-glow: 0 0 24px hsl(188 95% 55% / 0.35);
+    --shadow-marker: 0 0 12px hsl(188 100% 65% / 0.8);
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Typography */
+    --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 215 35% 8%;
+    --sidebar-foreground: 200 25% 92%;
+    --sidebar-primary: 188 95% 55%;
+    --sidebar-primary-foreground: 215 40% 8%;
+    --sidebar-accent: 215 28% 14%;
+    --sidebar-accent-foreground: 200 25% 92%;
+    --sidebar-border: 215 28% 18%;
+    --sidebar-ring: 188 95% 55%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Same — app is dark-first */
+    --background: 215 35% 7%;
+    --foreground: 200 25% 92%;
+    --card: 215 32% 10%;
+    --card-foreground: 200 25% 92%;
+    --popover: 215 38% 9%;
+    --popover-foreground: 200 25% 92%;
+    --primary: 188 95% 55%;
+    --primary-foreground: 215 40% 8%;
+    --secondary: 215 28% 14%;
+    --secondary-foreground: 200 25% 92%;
+    --muted: 215 25% 13%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 175 70% 45%;
+    --accent-foreground: 215 40% 8%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 28% 18%;
+    --input: 215 28% 16%;
+    --ring: 188 95% 55%;
   }
 }
 
@@ -99,7 +105,129 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  html {
+    @apply dark;
   }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-image: var(--gradient-glow);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .panel {
+    background: var(--gradient-panel);
+    @apply border border-border rounded-md backdrop-blur-md;
+    box-shadow: var(--shadow-panel);
+  }
+
+  .label-mono {
+    font-family: var(--font-mono);
+    @apply text-[10px] uppercase tracking-[0.18em] text-muted-foreground;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
+
+/* ===== Leaflet dark map overrides ===== */
+.leaflet-container {
+  background: hsl(var(--background)) !important;
+  font-family: inherit;
+  outline: none;
+}
+.leaflet-tile {
+  filter: brightness(0.55) contrast(1.15) saturate(0.7) hue-rotate(180deg) invert(0.92);
+}
+.leaflet-control-zoom a {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+.leaflet-control-zoom a:hover {
+  background: hsl(var(--secondary)) !important;
+  color: hsl(var(--primary)) !important;
+}
+.leaflet-control-attribution {
+  background: hsl(var(--card) / 0.7) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 9px !important;
+  backdrop-filter: blur(4px);
+}
+.leaflet-control-attribution a {
+  color: hsl(var(--primary)) !important;
+}
+
+/* Custom intel marker */
+.intel-marker {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid hsl(var(--background));
+  box-shadow: var(--shadow-marker);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+.intel-marker::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.25;
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+.intel-marker:hover {
+  transform: scale(1.4);
+}
+.intel-marker.osint  { background: hsl(var(--osint));  color: hsl(var(--osint)); }
+.intel-marker.humint { background: hsl(var(--humint)); color: hsl(var(--humint)); }
+.intel-marker.imint  { background: hsl(var(--imint));  color: hsl(var(--imint)); }
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.6); opacity: 0.5; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, hsl(var(--primary) / 0.08), transparent);
+  pointer-events: none;
+  animation: scan 4s linear infinite;
+}
+
+/* Leaflet popup theme */
+.leaflet-popup-content-wrapper {
+  background: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-panel) !important;
+  padding: 0 !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 280px !important;
+}
+.leaflet-popup-tip {
+  background: hsl(var(--popover)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+.leaflet-popup-close-button {
+  color: hsl(var(--muted-foreground)) !important;
+  padding: 6px 8px 0 0 !important;
 }
