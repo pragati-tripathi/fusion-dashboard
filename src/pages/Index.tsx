@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { ClassificationBanner } from "@/components/intel/ClassificationBanner";
 import { Header } from "@/components/intel/Header";
 import { SourceFilter } from "@/components/intel/SourceFilter";
 import { IngestionPanel } from "@/components/intel/IngestionPanel";
@@ -16,7 +15,7 @@ const Index = () => {
   });
   const [now, setNow] = useState(new Date());
 
-  /* ✅ STEP 1: LOAD FROM LOCAL STORAGE */
+  /* ✅ LOAD FROM LOCAL STORAGE */
   useEffect(() => {
     const saved = localStorage.getItem("nodes");
     if (saved) {
@@ -24,17 +23,18 @@ const Index = () => {
     }
   }, []);
 
-  /* ✅ STEP 1: SAVE TO LOCAL STORAGE */
+  /* ✅ SAVE TO LOCAL STORAGE */
   useEffect(() => {
     localStorage.setItem("nodes", JSON.stringify(nodes));
   }, [nodes]);
 
-  /* Existing useEffect (DO NOT REMOVE) */
+  /* Meta + time updater */
   useEffect(() => {
     document.title = "Strategic Fusion Dashboard — OSINT • HUMINT • IMINT";
     const meta = document.querySelector('meta[name="description"]');
     const desc =
       "Multi-source intelligence fusion dashboard unifying OSINT, HUMINT and IMINT on a single geospatial common operating picture.";
+
     if (meta) meta.setAttribute("content", desc);
     else {
       const m = document.createElement("meta");
@@ -42,6 +42,7 @@ const Index = () => {
       m.content = desc;
       document.head.appendChild(m);
     }
+
     const t = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(t);
   }, []);
@@ -65,7 +66,7 @@ const Index = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <ClassificationBanner />
+
       <Header totalNodes={visibleNodes.length} lastUpdate={lastUpdate} />
 
       <main className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[280px_1fr_300px] gap-3 p-3">
@@ -110,10 +111,8 @@ const Index = () => {
           </div>
         </div>
       </main>
-
-      <ClassificationBanner level="HANDLE VIA SPECIAL ACCESS CHANNELS ONLY" />
     </div>
-  );
+  );  
 };
 
 export default Index;
